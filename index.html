@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<title>Vokabeltrainer</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+background:#f4f6f8;
+display:flex;
+justify-content:center;
+}
+
+.container{
+width:100%;
+max-width:420px;
+padding:16px;
+}
+
+h1{
+text-align:center;
+margin:10px 0 20px 0;
+font-size:24px;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:10px;
+border:none;
+border-radius:12px;
+background:#2563eb;
+color:white;
+font-size:17px;
+}
+
+.module{
+background:white;
+padding:14px;
+margin-top:12px;
+border-radius:12px;
+box-shadow:0 3px 8px rgba(0,0,0,0.08);
+text-align:center;
+}
+
+.module h3{
+margin:0;
+font-size:18px;
+}
+
+.module p{
+margin:4px 0 10px 0;
+color:#555;
+}
+
+.card{
+margin-top:25px;
+height:160px;
+background:white;
+border-radius:16px;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+font-size:26px;
+padding:20px;
+box-shadow:0 3px 8px rgba(0,0,0,0.1);
+}
+
+.controls{
+display:flex;
+gap:8px;
+margin-top:15px;
+}
+
+.controls button{
+flex:1;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Vokabeltrainer</h1>
+
+<button onclick="generate()">Neue Wörter generieren</button>
+
+<button onclick="loadThemes()">Module laden</button>
+
+<div id="themes"></div>
+
+<div id="trainer"></div>
+
+</div>
+
+<script src="/static/app.js"></script>
+
+</body>
+</html>

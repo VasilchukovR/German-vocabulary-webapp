@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lernen</title>
+
+<style>
+
+body{
+background:#020c22;
+font-family:system-ui;
+color:white;
+margin:0;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+width:460px;
+text-align:center;
+}
+
+.card{
+background:#0f1e3a;
+border-radius:20px;
+padding:80px 20px;
+font-size:36px;
+cursor:pointer;
+margin-bottom:35px;
+box-shadow:0 10px 30px rgba(0,0,0,.5);
+transition:.2s;
+}
+
+.card:hover{
+transform:scale(1.02);
+}
+
+.answers{
+display:flex;
+justify-content:center;
+gap:14px;
+margin-bottom:20px;
+}
+
+button{
+padding:14px 22px;
+border:none;
+border-radius:12px;
+font-size:15px;
+cursor:pointer;
+transition:.15s;
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+button:hover{
+transform:translateY(-1px);
+box-shadow:0 4px 10px rgba(0,0,0,.4);
+}
+
+.sound{background:#3a63da;color:white}
+.correct{background:#2fa56a;color:white}
+.wrong{background:#c63a3a;color:white}
+
+.navigation{
+margin-top:30px;
+display:flex;
+justify-content:center;
+gap:16px;
+}
+
+.navbtn{
+background:#243a66;
+color:white;
+padding:10px 18px;
+border-radius:10px;
+}
+
+.switch{
+background:#8755d4;
+}
+
+.progress{
+height:6px;
+background:#1b2c4d;
+border-radius:10px;
+margin-top:25px;
+overflow:hidden;
+}
+
+.bar{
+height:100%;
+background:#3a63da;
+width:0%;
+transition:width .3s;
+}
+
+.counter{
+margin-top:10px;
+opacity:.8;
+font-size:14px;
+}
+
+.result{
+background:#0f1e3a;
+border-radius:20px;
+padding:50px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div id="card" class="card"></div>
+
+<div class="answers">
+
+<button class="sound" onclick="speak()">🔊</button>
+<button class="correct" onclick="answer(true)">Richtig</button>
+<button class="wrong" onclick="answer(false)">Falsch</button>
+
+</div>
+
+<div class="progress">
+<div id="bar" class="bar"></div>
+</div>
+
+<div id="counter" class="counter"></div>
+
+<div class="navigation">
+
+<button class="navbtn" onclick="prev()">← Zurück</button>
+<button class="navbtn switch" onclick="switchLang()">⇄</button>
+<button class="navbtn" onclick="location.href='/'">Hauptmenü</button>
+
+</div>
+
+</div>
+
+<script>
+
+let words=[]
+let index=0
+let flipped=false
+let correct=0
+let wrong=0
+let direction="de"
+
+let history=[]
+
+const params=new URLSearchParams(location.search)
+const module=params.get("m")
+
+async function load(){
+const res=await fetch("/words/"+module+".json")
+words=await res.json()
+show()
+}
+
+function show(){
+
+if(index>=words.length){
+showResult()
+return
+}
+
+flipped=false
+
+let word = direction==="de" ? words[index].de : words[index].ru
+
+document.getElementById("card").innerText=word
+
+document.getElementById("counter").innerText=
+(index+1)+" / "+words.length
+
+document.getElementById("bar").style.width=
+((index)/words.length*100)+"%"
+
+}
+
+function flip(){
+
+let text
+
+if(flipped){
+text = direction==="de" ? words[index].de : words[index].ru
+flipped=false
+}else{
+text = direction==="de" ? words[index].ru : words[index].de
+flipped=true
+}
+
+document.getElementById("card").innerText=text
+
+}
+
+document.getElementById("card").onclick=flip
+
+function speak(){
+
+let t = direction==="de" ? words[index].de : words[index].ru
+
+const u=new SpeechSynthesisUtterance(t)
+u.lang="de-DE"
+speechSynthesis.speak(u)
+
+}
+
+function answer(ok){
+
+history.push({correct,wrong})
+
+if(ok) correct++
+else wrong++
+
+index++
+show()
+
+}
+
+function prev(){
+
+if(index===0) return
+
+index--
+
+const h=history.pop()
+
+if(h){
+correct=h.correct
+wrong=h.wrong
+}
+
+show()
+
+}
+
+function switchLang(){
+direction = direction==="de" ? "ru" : "de"
+show()
+}
+
+function showResult(){
+
+document.querySelector(".container").innerHTML=`
+
+<div class="result">
+
+<h2>Modul abgeschlossen</h2>
+
+<div style="color:#2fa56a;font-size:22px;margin-top:20px">
+Richtig: ${correct}
+</div>
+
+<div style="color:#c63a3a;font-size:22px;margin-top:10px">
+Falsch: ${wrong}
+</div>
+
+<button onclick="location.href='/'"
+style="margin-top:30px;background:#3a63da;color:white;padding:14px 20px;border-radius:12px;border:none">
+Zurück zum Hauptmenü
+</button>
+
+</div>
+`
+
+}
+
+load()
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vokabeltrainer</title>
+
+<style>
+
+body{
+background:#020c22;
+font-family:system-ui,Arial;
+color:white;
+margin:0;
+display:flex;
+justify-content:center;
+}
+
+.container{
+width:420px;
+padding:30px 15px 60px;
+}
+
+h1{
+text-align:center;
+margin-bottom:30px;
+}
+
+.button{
+width:100%;
+padding:16px;
+border-radius:12px;
+border:none;
+font-size:16px;
+background:#2f56c6;
+color:white;
+margin-bottom:14px;
+cursor:pointer;
+transition:0.2s;
+}
+
+.button:hover{
+background:#3a63da;
+}
+
+.panel{
+background:#0f1e3a;
+border-radius:14px;
+padding:20px;
+margin-top:-6px;
+}
+
+.input-field{
+width:100%;
+padding:16px;
+border-radius:12px;
+border:1px solid #22385f;
+background:#0c1b36;
+color:white;
+font-size:15px;
+outline:none;
+margin-bottom:14px;
+box-sizing:border-box;
+transition:0.2s;
+}
+
+.input-field::placeholder{
+color:#7a8fb6;
+}
+
+.input-field:focus{
+border:1px solid #3f7cff;
+box-shadow:0 0 0 2px rgba(63,124,255,0.25);
+background:#0e2144;
+}
+
+.generate{
+width:100%;
+padding:16px;
+border-radius:12px;
+border:none;
+background:#2fa56a;
+color:white;
+font-size:16px;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+}
+
+.generate:hover{
+background:#35b375;
+}
+
+.loader{
+width:18px;
+height:18px;
+border:3px solid rgba(255,255,255,0.3);
+border-top:3px solid white;
+border-radius:50%;
+animation:spin 1s linear infinite;
+display:none;
+}
+
+@keyframes spin{
+0%{transform:rotate(0deg)}
+100%{transform:rotate(360deg)}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Vokabeltrainer</h1>
+
+<button class="button" onclick="toggleGenerator()">
+Neue Wörter generieren
+</button>
+
+<button class="button" onclick="loadThemes()">
+Module laden
+</button>
+
+<div id="generator" class="panel" style="display:none">
+
+<input
+class="input-field"
+id="prompt"
+placeholder="z.B. 20 Wörter zum Thema Arbeit an der Kasse"
+/>
+
+<input
+class="input-field"
+id="filename"
+placeholder="Modulname (optional)"
+/>
+
+<button id="generateBtn" class="generate" onclick="generate()">
+
+<span id="generateText">Generieren</span>
+<div id="loader" class="loader"></div>
+
+</button>
+
+</div>
+
+<div id="themes"></div>
+
+</div>
+
+<script src="/static/app.js"></script>
+
+<script>
+
+function toggleGenerator(){
+const g=document.getElementById("generator")
+g.style.display=g.style.display==="none"?"block":"none"
+}
+
+async function generate(){
+
+const prompt=document.getElementById("prompt").value
+const filename=document.getElementById("filename").value
+
+const btn=document.getElementById("generateBtn")
+const text=document.getElementById("generateText")
+const loader=document.getElementById("loader")
+
+text.innerText="Generiere..."
+loader.style.display="block"
+btn.disabled=true
+
+await fetch("/generate?prompt="+encodeURIComponent(prompt)+"&filename="+encodeURIComponent(filename),{method:"POST"})
+
+loader.style.display="none"
+text.innerText="Generieren"
+btn.disabled=false
+
+toggleGenerator()
+loadThemes()
+
+}
+
+window.onload=loadThemes
+
+</script>
+
+</body>
+</html>
